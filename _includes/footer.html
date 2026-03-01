@@ -1,21 +1,14 @@
 <!-- Footer -->
-<footer>
+<footer class="site-footer">
     <div class="container">
         <div class="row">
-            <div class="col-md-8">
-                <ul class="list-inline">
-                  Site Map:
-                  {% for page in site.pages %}
-                    <li>
-                        <a href="{{ page.url }}">{{ page.title }}</a>
-                    </li>
-                  {% endfor %}
-
-                </ul>
+            <div class="col-md-6">
                 <p class="copyright text-muted small">{{ site.copyright }}</p>
             </div>
-            <div class="col-md-4">
-                {{ site.credits }}
+            <div class="col-md-6 text-md-right">
+                {% for link in site.social %}
+                <a href="{{ link.url }}" class="text-muted ml-2" target="_blank"><i class="fab fa-{{ link.title }}"></i></a>
+                {% endfor %}
             </div>
         </div>
     </div>

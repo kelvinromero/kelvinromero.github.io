@@ -6,19 +6,24 @@ url: https://kelvinromero.github.io
 baseurl: /
 title: Kelvin Romero
 email: kelvinromero@gmail.com
-author: Kelvin Romero Meira de Oliveira Cordeiro
+author: Kelvin Romero
 description: >
-  Kelvin Romero Meira de Oliveira Cordeiro.
-copyright: 'Copyright &copy; 2018 Kelvin Romero. All Rights Reserved.'
+  Staff Engineer writing about observability, distributed systems, and engineering productivity.
+copyright: 'Copyright &copy; 2026 Kelvin Romero. All Rights Reserved.'
 credits: 
 
 # ----------------------- #
 #    Jekyll & Plugins     #
 # ----------------------- #
 
-# Build settings
 markdown: kramdown
 permalink: pretty
+highlighter: rouge
+future: true
+
+kramdown:
+  input: GFM
+  syntax_highlighter: rouge
 
 # ----------------------- #
 #   3rd Party Settings    #

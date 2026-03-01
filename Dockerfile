@@ -1,19 +1,9 @@
-FROM ruby:2.5
+FROM ruby:3.2-slim
 
-RUN bundle config --global frozen 1
+RUN apt-get update && apt-get install -y build-essential && rm -rf /var/lib/apt/lists/*
 
-# Workdir
-WORKDIR /usr/src/app
+WORKDIR /srv/jekyll
 
-# Dependencies
-COPY Gemfile /usr/src/app
-COPY Gemfile.lock /usr/src/app
-RUN bundle install
+EXPOSE 4000
 
-
-# Port
-EXPOSE 4000:4000
-
-# Servin the app
-CMD jekyll serve --watch --incremental --port 4000 --host 0.0.0.0
-
+CMD rm -f Gemfile.lock && bundle install && jekyll serve --watch --incremental --port 4000 --host 0.0.0.0

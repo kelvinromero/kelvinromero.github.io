@@ -320,7 +320,7 @@ During the DDoS attack:
 
 This last finding is the key insight. It's not just that there are more interrupts — the *nature* of those interrupts changes. Under DDoS, a disproportionate number of interrupts are high-priority, forcing the CPU to perform expensive context switches rather than handling them in the current process context.
 
-## Why this matters
+## Why I thought this was interesting
 
 This research, while academic, touches on something very practical: **noisy neighbor problems in shared infrastructure**. If you're running workloads on shared virtualized infrastructure (which includes most cloud environments), a DDoS attack on a co-tenant can degrade your performance even if your VM isn't the target.
 
@@ -330,7 +330,13 @@ The mechanism is clear: the flood of network packets generates hardware interrup
 
 This was undergraduate research — my first real exposure to systems-level thinking. Setting up the controlled environment, writing the automation scripts, collecting and analyzing the data — it taught me how to reason about system behavior from first principles.
 
-Looking back, the skills translate directly to what I do today in observability engineering: measuring system behavior under stress, understanding where overhead comes from, and making the invisible visible through data collection and analysis.
+This first principles thing really stuck with me by the way.
+
+But looking back, I should have instrumented the VMs themselves to get more granular data on how the attack affected their workloads. We only had visibility from Dom0, which limited our understanding of the internal state of each VM during the attack.
+
+Also, I should have explored the real world implications more deeply. For example, did it present a significant risk to cloud customers? How cloud companies saw this problem, did affect revenue, and what mitigation strategies existed at the time?
+
+I think these things would have made the paper more impactful and relevant to practitioners, rather than just an academic exercise. But hey, it was my first research project — I was learning as I went.
 
 ## What's next
 

@@ -50,9 +50,12 @@ Before diving into the numbers, here's an interactive simulation of what happens
 <div id="cpu-sim" style="max-width:750px; margin:2rem auto; font-family: system-ui, -apple-system, sans-serif;">
 
 <!-- Controls -->
-<div style="display:flex; align-items:center; gap:1rem; margin-bottom:1rem; flex-wrap:wrap;">
+<div style="display:flex; align-items:center; gap:0.75rem; margin-bottom:1rem; flex-wrap:wrap;">
   <button id="ddos-toggle" onclick="toggleDDoS()" style="padding:0.5rem 1.25rem; border:none; border-radius:6px; font-weight:600; font-size:0.875rem; cursor:pointer; background:#22c55e; color:#fff; transition: background 0.3s;">
     ▶ Start DDoS Attack
+  </button>
+  <button id="pause-toggle" onclick="togglePause()" style="padding:0.5rem 1rem; border:none; border-radius:6px; font-weight:600; font-size:0.875rem; cursor:pointer; background:#334155; color:#94a3b8; transition: background 0.3s;">
+    ⏸ Pause
   </button>
   <span id="ddos-status" style="font-size:0.8rem; color:#888;">Normal operation</span>
 </div>
@@ -177,57 +180,59 @@ Before diving into the numbers, here's an interactive simulation of what happens
     ddos:    { interrupts: 141157, cs: 95369, rate: 67.63 }
   };
 
-  function makeSlots(lane, count, colorFn) {
-    lane.innerHTML = '';
-    for (var i = 0; i < count; i++) {
-      var d = document.createElement('div');
-      d.style.cssText = 'flex:1; height:100%; border-radius:2px; transition: background 0.15s;';
-      d.style.background = colorFn(i);
-      lane.appendChild(d);
+  // Generate a color for a new slot based on lane and current state
+  function slotColor(lane) {
+    var r = Math.random();
+    if (ddosActive) {
+      if (lane === 'vm1') return r < 0.55 ? '#f59e0b' : '#3b82f6';
+      if (lane === 'vm2') return r < 0.4 ? '#f59e0b' : '#3b82f6';
+      if (lane === 'hyp') return r < 0.85 ? '#8b5cf6' : '#1e293b';
+      if (r < 0.15) return '#0f172a';
+      return Math.random() > 0.3 ? '#ef4444' : '#6b7280';
+    } else {
+      if (lane === 'vm1') return r < 0.12 ? '#f59e0b' : '#3b82f6';
+      if (lane === 'vm2') return r < 0.08 ? '#f59e0b' : '#3b82f6';
+      if (lane === 'hyp') return r < 0.15 ? '#8b5cf6' : '#1e293b';
+      if (r < 0.12) return '#ef4444';
+      if (r < 0.28) return '#6b7280';
+      return '#0f172a';
     }
   }
 
-  function normalColors() {
-    // VM1: mostly running, occasional context switch
-    makeSlots(document.getElementById('lane-vm1'), SLOTS, function(i) {
-      return (i % 8 === 5) ? '#f59e0b' : '#3b82f6';
-    });
-    // VM2: mostly running, rare context switch
-    makeSlots(document.getElementById('lane-vm2'), SLOTS, function(i) {
-      return (i % 12 === 7) ? '#f59e0b' : '#3b82f6';
-    });
-    // Hypervisor: mostly idle, occasional handling
-    makeSlots(document.getElementById('lane-hyp'), SLOTS, function(i) {
-      return (i % 8 === 5 || i % 12 === 7) ? '#8b5cf6' : '#1e293b';
-    });
-    // Interrupts: sparse, mostly low-priority
-    makeSlots(document.getElementById('lane-int'), SLOTS, function(i) {
-      if (i % 8 === 4) return '#ef4444';
-      if (i % 6 === 3) return '#6b7280';
-      return '#0f172a';
-    });
+  function createSlot(color) {
+    var d = document.createElement('div');
+    d.style.cssText = 'flex:1; height:100%; border-radius:2px;';
+    d.style.background = color;
+    return d;
   }
 
-  function ddosColors() {
-    // VM1: heavily interrupted, lots of context switches
-    makeSlots(document.getElementById('lane-vm1'), SLOTS, function(i) {
-      if (i % 3 === 0) return '#f59e0b';
-      if (i % 3 === 1) return '#f59e0b';
-      return '#3b82f6';
-    });
-    // VM2: collateral damage — more context switches than normal
-    makeSlots(document.getElementById('lane-vm2'), SLOTS, function(i) {
-      return (i % 4 < 2) ? '#f59e0b' : '#3b82f6';
-    });
-    // Hypervisor: constantly busy
-    makeSlots(document.getElementById('lane-hyp'), SLOTS, function(i) {
-      return (i % 5 === 4) ? '#1e293b' : '#8b5cf6';
-    });
-    // Interrupts: flooded with high-priority
-    makeSlots(document.getElementById('lane-int'), SLOTS, function(i) {
-      if (i % 5 === 4) return '#0f172a';
-      return (Math.random() > 0.3) ? '#ef4444' : '#6b7280';
-    });
+  // Fill a lane with initial slots
+  function fillLane(laneEl, lane) {
+    laneEl.innerHTML = '';
+    for (var i = 0; i < SLOTS; i++) {
+      laneEl.appendChild(createSlot(slotColor(lane)));
+    }
+  }
+
+  // Push one new slot on the right, remove oldest on the left
+  var lanes = [
+    { id: 'lane-vm1', name: 'vm1' },
+    { id: 'lane-vm2', name: 'vm2' },
+    { id: 'lane-hyp', name: 'hyp' },
+    { id: 'lane-int', name: 'int' }
+  ];
+
+  var paused = false;
+
+  function tickTimeline() {
+    if (paused) return;
+    for (var i = 0; i < lanes.length; i++) {
+      var el = document.getElementById(lanes[i].id);
+      if (el.children.length >= SLOTS) {
+        el.removeChild(el.firstChild);
+      }
+      el.appendChild(createSlot(slotColor(lanes[i].name)));
+    }
   }
 
   function animateCounters(target) {
@@ -242,7 +247,6 @@ Before diving into the numbers, here's an interactive simulation of what happens
     function tick() {
       step++;
       var t = step / steps;
-      // ease out
       var e = 1 - Math.pow(1 - t, 3);
       var ci = Math.round(startInt + (target.interrupts - startInt) * e);
       var cc = Math.round(startCs + (target.cs - startCs) * e);
@@ -265,12 +269,6 @@ Before diving into the numbers, here's an interactive simulation of what happens
     document.getElementById('bar-rate-val').textContent = target.rate + '%';
   }
 
-  function jitterTimeline() {
-    if (ddosActive) {
-      ddosColors();
-    }
-  }
-
   window.toggleDDoS = function() {
     ddosActive = !ddosActive;
     var btn = document.getElementById('ddos-toggle');
@@ -281,24 +279,37 @@ Before diving into the numbers, here's an interactive simulation of what happens
       btn.textContent = '■ Stop DDoS Attack';
       status.textContent = '🔴 DDoS attack in progress — 10 slaves flooding VM1';
       status.style.color = '#f87171';
-      ddosColors();
       animateCounters(DATA.ddos);
       updateBars(DATA.ddos);
-      simInterval = setInterval(jitterTimeline, 500);
     } else {
       btn.style.background = '#22c55e';
       btn.textContent = '▶ Start DDoS Attack';
       status.textContent = 'Normal operation';
       status.style.color = '#888';
-      normalColors();
       animateCounters(DATA.normal);
       updateBars(DATA.normal);
-      if (simInterval) { clearInterval(simInterval); simInterval = null; }
     }
   };
 
-  // Initialize
-  normalColors();
+  window.togglePause = function() {
+    paused = !paused;
+    var btn = document.getElementById('pause-toggle');
+    if (paused) {
+      btn.textContent = '▶ Resume';
+      btn.style.background = '#475569';
+      btn.style.color = '#e2e8f0';
+    } else {
+      btn.textContent = '⏸ Pause';
+      btn.style.background = '#334155';
+      btn.style.color = '#94a3b8';
+    }
+  };
+
+  // Initialize lanes and start scrolling
+  for (var i = 0; i < lanes.length; i++) {
+    fillLane(document.getElementById(lanes[i].id), lanes[i].name);
+  }
+  simInterval = setInterval(tickTimeline, 500);
 })();
 </script>
 

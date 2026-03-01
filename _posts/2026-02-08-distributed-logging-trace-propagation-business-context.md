@@ -2,13 +2,13 @@
 layout: post
 title: "Distributed Logging — Trace Propagation and Business Context"
 description: "How to correlate logs across services with trace_id propagation and enrich them with bounded context, feature, and session feature dimensions."
-date: 2026-03-08
+date: 2026-02-08
 tags: [observability, distributed-systems, logging, go]
 ---
 
 Your canonical logs are working great — in a single service. But when a user clicks "Place Order," their request touches the API gateway, auth service, payment service, inventory service, and notification service. Five services, five canonical logs. Zero correlation.
 
-In the [previous article]({% post_url 2026-03-01-canonical-logs-foundation-of-observability %}), we built structured canonical logs that emit one rich log line per request. That pattern gives you everything you need to debug issues within a single service. But modern systems aren't single services. A single user action fans out across a mesh of synchronous HTTP calls and asynchronous Kafka messages, and when something breaks, you're left staring at five independent log streams trying to reconstruct what happened by guessing at timestamps.
+In the [previous article]({% post_url 2026-02-01-canonical-logs-foundation-of-observability %}), we built structured canonical logs that emit one rich log line per request. That pattern gives you everything you need to debug issues within a single service. But modern systems aren't single services. A single user action fans out across a mesh of synchronous HTTP calls and asynchronous Kafka messages, and when something breaks, you're left staring at five independent log streams trying to reconstruct what happened by guessing at timestamps.
 
 This article fixes that. We'll propagate a `trace_id` across every service boundary, enrich logs with business dimensions that make them queryable by domain concepts, and show how log-based correlation complements — but doesn't replace — distributed tracing.
 

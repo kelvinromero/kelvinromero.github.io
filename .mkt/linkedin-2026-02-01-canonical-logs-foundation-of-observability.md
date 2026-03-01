@@ -4,7 +4,7 @@ Eu passei por isso várias vezes. Então resolvi escrever sobre uma abordagem qu
 
 Não é ideia minha — a Stripe popularizou isso. Mas implementar em Go com slog, definir responsabilidades por camada, e entender onde NÃO logar, foi onde a coisa ficou interessante.
 
-Escrevi sobre isso aqui: https://kelvinromero.github.io/2026/03/01/canonical-logs-foundation-of-observability/
+Escrevi sobre isso aqui: https://kelvinromero.github.io/2026/02/01/canonical-logs-foundation-of-observability/
 
 ---
 
@@ -14,6 +14,6 @@ I've been there more times than I'd like to admit. So I wrote about canonical lo
 
 The idea comes from Stripe. But implementing it in Go with slog, defining layer responsibilities, and figuring out where NOT to log — that's where it got interesting.
 
-Full article: https://kelvinromero.github.io/2026/03/01/canonical-logs-foundation-of-observability/
+Full article: https://kelvinromero.github.io/2026/02/01/canonical-logs-foundation-of-observability/
 
 #observability #logging #softwarearchitecture #golang #softwareengineering

@@ -2,7 +2,7 @@
 layout: post
 title: "Log-Based Engineering Metrics — From Logs to Grafana Dashboards"
 description: "How to derive engineering metrics like latency percentiles, error rates, and throughput from your canonical logs using Grafana and Loki — no Prometheus instrumentation needed."
-date: 2026-03-15
+date: 2026-02-15
 tags: [observability, grafana, loki, logql, metrics]
 ---
 

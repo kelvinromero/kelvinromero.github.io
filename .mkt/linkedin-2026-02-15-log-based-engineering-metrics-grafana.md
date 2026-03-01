@@ -4,7 +4,7 @@ Tenho experimentado derivar métricas de engenharia diretamente dos canonical lo
 
 O artigo mostra as queries, a configuração dos painéis, e as regras de alerta. Incluindo onde essa abordagem NÃO funciona bem.
 
-Artigo: https://kelvinromero.github.io/2026/03/15/log-based-engineering-metrics-grafana/
+Artigo: https://kelvinromero.github.io/2026/02/15/log-based-engineering-metrics-grafana/
 
 ---
 
@@ -14,6 +14,6 @@ I've been experimenting with deriving engineering metrics directly from canonica
 
 The article covers the queries, panel configs, and alert rules. Including where this approach falls short.
 
-Full article: https://kelvinromero.github.io/2026/03/15/log-based-engineering-metrics-grafana/
+Full article: https://kelvinromero.github.io/2026/02/15/log-based-engineering-metrics-grafana/
 
 #observability #grafana #loki #logql #metrics #softwareengineering

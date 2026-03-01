@@ -4,6 +4,7 @@ title: "CPU Context Switching and Performance Degradation Under DDoS in Xen Serv
 description: "Research paper from CONNEPI 2016 analyzing how CPU context switches relate to performance degradation in paravirtualized environments during distributed denial-of-service attacks."
 date: 2026-02-28
 tags: [virtualization, security, research, systems]
+image: /assets/img/posts/cpu-context-switching-ddos-xen-server.svg
 ---
 
 *Originally published as a research paper at CONNEPI 2016. Revisited here with interactive visualizations and updated context.*
@@ -40,7 +41,7 @@ We built a controlled lab environment:
 
 The experiment ran **60 rounds**: 30 without attack (baseline) and 30 with a DDoS attack targeting VM1. In both scenarios, both VMs ran synthetic workloads via Sysbench and Stress-ng to simulate realistic server load.
 
-We collected context switch and interrupt data directly from Dom0 (the privileged Xen management domain) using `vmstat`.
+Each round followed four automated phases — **initialization**, **execution**, **collection**, and **cleanup** — orchestrated by shell scripts that coordinated all machines via SSH. On the VMs, **Sysbench** and **Stress-ng** generated a consistent synthetic workload to simulate realistic server load. We collected context switch and interrupt data directly from Dom0 (the privileged Xen management domain) using **`vmstat`**, a native Linux tool that reports kernel statistics including per-second interrupt and context switch counts.
 
 ## See it in action
 
@@ -83,12 +84,27 @@ Before diving into the numbers, here's an interactive simulation of what happens
       <div id="lane-int" style="flex:1; height:16px; display:flex; gap:1px; overflow:hidden; border-radius:4px;"></div>
     </div>
     <!-- Legend -->
-    <div style="display:flex; gap:1rem; margin-top:0.75rem; flex-wrap:wrap;">
-      <span style="font-size:0.65rem; color:#94a3b8;"><span style="display:inline-block;width:10px;height:10px;background:#3b82f6;border-radius:2px;margin-right:3px;vertical-align:middle;"></span>Running</span>
-      <span style="font-size:0.65rem; color:#94a3b8;"><span style="display:inline-block;width:10px;height:10px;background:#f59e0b;border-radius:2px;margin-right:3px;vertical-align:middle;"></span>Context Switch</span>
-      <span style="font-size:0.65rem; color:#94a3b8;"><span style="display:inline-block;width:10px;height:10px;background:#8b5cf6;border-radius:2px;margin-right:3px;vertical-align:middle;"></span>Hypervisor handling</span>
-      <span style="font-size:0.65rem; color:#94a3b8;"><span style="display:inline-block;width:10px;height:10px;background:#ef4444;border-radius:2px;margin-right:3px;vertical-align:middle;"></span>Interrupt (high-priority)</span>
-      <span style="font-size:0.65rem; color:#94a3b8;"><span style="display:inline-block;width:10px;height:10px;background:#6b7280;border-radius:2px;margin-right:3px;vertical-align:middle;"></span>Interrupt (low-priority)</span>
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.5rem 1.5rem; margin-top:1rem; padding:0.75rem; background:#1e293b; border-radius:6px;">
+      <div style="display:flex; align-items:center; gap:0.5rem;">
+        <span style="display:inline-block;width:12px;height:12px;background:#3b82f6;border-radius:2px;flex-shrink:0;"></span>
+        <span style="font-size:0.75rem; color:#cbd5e1;"><strong style="color:#e2e8f0;">Running</strong> — VM executing its workload normally</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:0.5rem;">
+        <span style="display:inline-block;width:12px;height:12px;background:#f59e0b;border-radius:2px;flex-shrink:0;"></span>
+        <span style="font-size:0.75rem; color:#cbd5e1;"><strong style="color:#e2e8f0;">Context Switch</strong> — CPU saves/loads process state (expensive)</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:0.5rem;">
+        <span style="display:inline-block;width:12px;height:12px;background:#8b5cf6;border-radius:2px;flex-shrink:0;"></span>
+        <span style="font-size:0.75rem; color:#cbd5e1;"><strong style="color:#e2e8f0;">Hypervisor</strong> — Dom0 mediating system calls and I/O</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:0.5rem;">
+        <span style="display:inline-block;width:12px;height:12px;background:#ef4444;border-radius:2px;flex-shrink:0;"></span>
+        <span style="font-size:0.75rem; color:#cbd5e1;"><strong style="color:#e2e8f0;">High-priority interrupt</strong> — forces CPU to context switch</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:0.5rem;">
+        <span style="display:inline-block;width:12px;height:12px;background:#6b7280;border-radius:2px;flex-shrink:0;"></span>
+        <span style="font-size:0.75rem; color:#cbd5e1;"><strong style="color:#e2e8f0;">Low-priority interrupt</strong> — handled without context switch</span>
+      </div>
     </div>
   </div>
 </div>
@@ -98,14 +114,17 @@ Before diving into the numbers, here's an interactive simulation of what happens
   <div style="background:#0f172a; border:1px solid #1e293b; border-radius:8px; padding:0.75rem; text-align:center;">
     <div style="font-size:0.65rem; color:#64748b; text-transform:uppercase; letter-spacing:0.05em;">Interrupts/s</div>
     <div id="counter-int" style="font-size:1.5rem; font-weight:700; color:#ef4444; font-variant-numeric:tabular-nums;">0</div>
+    <div style="font-size:0.6rem; color:#475569; margin-top:0.25rem;">Hardware signals requesting CPU attention</div>
   </div>
   <div style="background:#0f172a; border:1px solid #1e293b; border-radius:8px; padding:0.75rem; text-align:center;">
     <div style="font-size:0.65rem; color:#64748b; text-transform:uppercase; letter-spacing:0.05em;">Context Switches/s</div>
     <div id="counter-cs" style="font-size:1.5rem; font-weight:700; color:#f59e0b; font-variant-numeric:tabular-nums;">0</div>
+    <div style="font-size:0.6rem; color:#475569; margin-top:0.25rem;">Times CPU saved/loaded process state</div>
   </div>
   <div style="background:#0f172a; border:1px solid #1e293b; border-radius:8px; padding:0.75rem; text-align:center;">
     <div style="font-size:0.65rem; color:#64748b; text-transform:uppercase; letter-spacing:0.05em;">Conversion Rate</div>
     <div id="counter-rate" style="font-size:1.5rem; font-weight:700; color:#a78bfa; font-variant-numeric:tabular-nums;">0%</div>
+    <div style="font-size:0.6rem; color:#475569; margin-top:0.25rem;">% of interrupts that forced a context switch</div>
   </div>
 </div>
 

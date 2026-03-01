@@ -2,13 +2,13 @@
 layout: post
 title: "Log-Based Business Metrics — Product Observability from Your Existing Logs"
 description: "How to derive product metrics like feature adoption, conversion funnels, and drop-off analysis from canonical logs enriched with business context — using Grafana and Loki."
-date: 2026-03-22
+date: 2026-02-22
 tags: [observability, product-metrics, grafana, loki, logql]
 ---
 
 Your engineering dashboards are humming. Latency, error rates, throughput — all derived from canonical logs. Your CTO is happy. Then your product manager asks: "How many users completed the checkout flow yesterday? Where are they dropping off?" You open Amplitude. It costs $36,000/year. Your logs already have the answer.
 
-Over the past three articles, we've built a structured logging foundation that most teams never fully exploit. In the [first article]({% post_url 2026-03-01-canonical-logs-foundation-of-observability %}), we introduced canonical log lines — one wide, structured event per request per service, emitted at the end of the request lifecycle. In the [second article]({% post_url 2026-03-08-distributed-logging-trace-propagation-business-context %}), we propagated `trace_id` across service boundaries and enriched every log line with business dimensions: `bounded_context`, `feature`, and `session_feature_id`. In the third article, we turned those logs into engineering metrics — latency percentiles, error rate breakdowns, throughput dashboards — all in Grafana with Loki.
+Over the past three articles, we've built a structured logging foundation that most teams never fully exploit. In the [first article]({% post_url 2026-02-01-canonical-logs-foundation-of-observability %}), we introduced canonical log lines — one wide, structured event per request per service, emitted at the end of the request lifecycle. In the [second article]({% post_url 2026-02-08-distributed-logging-trace-propagation-business-context %}), we propagated `trace_id` across service boundaries and enriched every log line with business dimensions: `bounded_context`, `feature`, and `session_feature_id`. In the third article, we turned those logs into engineering metrics — latency percentiles, error rate breakdowns, throughput dashboards — all in Grafana with Loki.
 
 This article takes the final step. We're going to derive *product* metrics from the same log data. Feature adoption. Conversion funnels. Drop-off analysis. Bounded context health. No new pipeline. No new vendor. Just LogQL queries against the logs you already produce.
 

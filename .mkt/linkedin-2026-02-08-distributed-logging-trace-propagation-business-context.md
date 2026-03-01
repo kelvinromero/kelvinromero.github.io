@@ -4,7 +4,7 @@ Tenho explorado como propagar trace_id entre serviços (HTTP e Kafka) e enriquec
 
 Com isso, uma query LogQL reconstrói o fluxo inteiro de um checkout distribuído. Sem precisar de um sistema de tracing completo.
 
-Artigo completo: https://kelvinromero.github.io/2026/03/08/distributed-logging-trace-propagation-business-context/
+Artigo completo: https://kelvinromero.github.io/2026/02/08/distributed-logging-trace-propagation-business-context/
 
 ---
 
@@ -14,6 +14,6 @@ I've been exploring how to propagate trace_id across services (HTTP and Kafka) a
 
 With that in place, a single LogQL query reconstructs an entire distributed checkout flow. No full tracing system required.
 
-Full article: https://kelvinromero.github.io/2026/03/08/distributed-logging-trace-propagation-business-context/
+Full article: https://kelvinromero.github.io/2026/02/08/distributed-logging-trace-propagation-business-context/
 
 #observability #distributedsystems #logging #golang #softwareengineering

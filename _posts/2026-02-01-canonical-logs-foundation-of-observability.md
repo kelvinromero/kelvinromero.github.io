@@ -2,7 +2,7 @@
 layout: post
 title: "Canonical Logs — The Foundation of Effective Observability"
 description: "How one structured log event per request can replace dozens of scattered log lines and become the foundation of your observability stack."
-date: 2026-03-01
+date: 2026-02-01
 tags: [observability, logging, architecture, go]
 ---
 

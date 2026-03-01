@@ -1,23 +1,17 @@
 ---
-layout: default
-title: Plades
-type: project
-img: '/assets/img/projects/plades.png'
-tags: Elastic-Search Django jQuery django-rest-framework
-intro: Indexing and searching economic resources from my state.
+layout: post
+title: "Plades — Indexing Economic Resources for the State of Paraíba"
+description: "A search platform for researchers, local productive arrangements, and public policies, built in partnership with IFPB, UFPB, Codata, and the Paraíba state government."
+date: 2018-12-14
+tags: [elasticsearch, django, search, python]
 ---
 
-# Plades
-O Plades é fruto de uma parceria entre o IFPB, UFPB, Codata e Governo do estado da Paraíba.
-Consiste em uma ferramenta de indexação de pesquisadores, arranjos produtivos locais, políticas públicas entre outras informações públicas que podem ajudar na busca de condições adequadas para empreender no Estado da Paraíba.
+Plades was born from a partnership between IFPB, UFPB, Codata, and the state government of Paraíba, Brazil. It's a search and indexing tool for researchers, local productive arrangements, public policies, and other public data that helps identify conditions for entrepreneurship across the state.
 
-Publicação ainda pendente.
+## The solution
 
-## Tecnologia
-
-Arquitetura aprimorar a estrutura do meu projeto anterior. Combinando Django com JS e Elastic Search no Backend, suporta busca de centenas de milhares de entradas em menos de 1 segundo.
-
+The architecture evolved from my previous project (SABER IFPB), combining Django with JavaScript and Elasticsearch on the backend. It supports searching hundreds of thousands of entries in under one second.
 
 ## Screenshots
 
-![saber](/assets/img/projects/plades.png)
+![Plades](/assets/img/projects/plades.png)
